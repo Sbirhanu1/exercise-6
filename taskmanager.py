@@ -1,3 +1,5 @@
+import sys
+
 class Task:
     def __init__(self, title, level, deadline, is_done=False):
         self.title = title
@@ -5,49 +7,82 @@ class Task:
         self.deadline = deadline
         self.is_done = is_done
 
+    def mark_done(self):
+        self.is_done = True
+
     def to_dict(self):
         return {
-            "title": self.title,
-            "level": self.level,
-            "deadline": self.deadline,
-            "is_done": self.is_done
+            'Title': self.title,
+            'Level': self.level,
+            'Deadline': self.deadline,
+            'Completed': 'Yes' if self.is_done else 'No'
         }
 
 def view_tasks(tasks):
     if not tasks:
-        print("No tasks yet.")
-    else:
-        for i, task in enumerate(tasks):
-            status = "Done" if task.is_done else "Not done"
-            print(f"{i+1}. {task.title} | Level: {task.level} | Due: {task.deadline} | {status}")
+        print("No tasks to display.")
+        return
+    for task in tasks:
+        task_info = task.to_dict()
+        print(f"Title: {task_info['Title']}, Level: {task_info['Level']}, Deadline: {task_info['Deadline']}, Completed: {task_info['Completed']}")
 
 def add_task(tasks):
-    title = input("Task title: ")
-    level = input("Difficulty level (1-5): ")
-    deadline = input("Deadline (YYYY-MM-DD): ")
-    task = Task(title, level, deadline)
-    tasks.append(task)
+    title = input("Enter task title: ")
+    level = input("Enter task level (1-5): ")
+    deadline = input("Enter task deadline (YYYY-MM-DD): ")
+    new_task = Task(title, level, deadline)
+    tasks.append(new_task)
     print("Task added!")
+
+def mark_task_done(tasks):
+    view_tasks(tasks)
+    try:
+        task_index = int(input("Enter task number to mark as done: ")) - 1
+        if 0 <= task_index < len(tasks):
+            tasks[task_index].mark_done()
+            print("Task marked as done!")
+        else:
+            print("Invalid task number.")
+    except ValueError:
+        print("Invalid input. Please enter a number.")
+
+def delete_task(tasks):
+    view_tasks(tasks)
+    try:
+        task_index = int(input("Enter task number to delete: ")) - 1
+        if 0 <= task_index < len(tasks):
+            del tasks[task_index]
+            print("Task deleted!")
+        else:
+            print("Invalid task number.")
+    except ValueError:
+        print("Invalid input. Please enter a number.")
 
 def main():
     tasks = []
-
+    
     while True:
-        print("\n==== TASK MANAGER ====")
-        print("1. View tasks")
-        print("2. Add task")
-        print("3. Exit")
-        choice = input("Choose an option: ")
-
-        if choice == "1":
+        print("\n1. View Tasks")
+        print("2. Add Task")
+        print("3. Mark Task as Done")
+        print("4. Delete Task")
+        print("5. Exit")
+        
+        choice = input("Enter your choice (1-5): ")
+        
+        if choice == '1':
             view_tasks(tasks)
-        elif choice == "2":
+        elif choice == '2':
             add_task(tasks)
-        elif choice == "3":
+        elif choice == '3':
+            mark_task_done(tasks)
+        elif choice == '4':
+            delete_task(tasks)
+        elif choice == '5':
             print("Goodbye!")
-            break
+            sys.exit()
         else:
-            print("Invalid option. Try again.")
+            print("Invalid choice. Try again.")
 
 if __name__ == '__main__':
     main()
